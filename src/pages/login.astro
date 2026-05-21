@@ -1,0 +1,179 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import '../styles/global.css';
+import { MALDIVES_ISLANDS } from '../lib/maldives';
+const user = (Astro.locals as any).user;
+if (user) return Astro.redirect('/');
+---
+<AppLayout title="Sign In">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;">
+    <div style="width:100%;max-width:420px;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <img src="/logo.png" alt="RedHeroes" style="height:72px;mix-blend-mode:screen;margin-bottom:1rem;" />
+        <h1 style="color:var(--red);font-size:1.75rem;font-weight:900;letter-spacing:0.06em;">REDHEROES</h1>
+        <p style="color:var(--text-muted);font-size:0.875rem;margin-top:0.25rem;">Blood Donation Network</p>
+      </div>
+
+      <div class="card">
+        <div id="auth-error" class="alert alert-danger" style="display:none;"></div>
+
+        <div id="login-form">
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input class="form-input" type="tel" id="phone" placeholder="+1 234 567 8900" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" id="password" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary btn-block" id="login-btn" style="margin-bottom:1rem;">Sign In</button>
+          <p style="text-align:center;color:var(--text-muted);font-size:0.875rem;">
+            New here? <a href="#" id="show-register" style="color:var(--red);font-weight:700;">Create Account</a>
+          </p>
+        </div>
+
+        <div id="register-form" style="display:none;">
+          <div class="grid-2">
+            <div class="form-group" style="grid-column:1/-1">
+              <label class="form-label">Full Name</label>
+              <input class="form-input" type="text" id="reg-name" placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input class="form-input" type="tel" id="reg-phone" placeholder="+1 234 567 8900" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Island</label>
+              <div style="position:relative;" id="city-wrapper">
+                <div id="city-display" onclick="toggleCityDropdown()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0.625rem 0.875rem;color:var(--text-dim);font-size:0.9375rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+                  <span id="city-label">Select island…</span>
+                  <span style="font-size:0.75rem;">▼</span>
+                </div>
+                <input type="hidden" id="reg-city" />
+                <div id="city-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border-red);border-radius:10px;z-index:999;max-height:260px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+                  <div style="padding:0.5rem;">
+                    <input class="form-input" id="city-search" placeholder="Search island…" oninput="filterIslands(this.value)" onclick="event.stopPropagation()" style="font-size:0.875rem;padding:0.5rem 0.75rem;" />
+                  </div>
+                  <div id="city-list" style="overflow-y:auto;max-height:200px;">
+                    {MALDIVES_ISLANDS.map(island => (
+                      <button type="button" class="city-opt" data-island={island} onclick={`selectIsland('${island}')`} style="display:block;width:100%;padding:0.5rem 1rem;background:none;color:var(--text);border:none;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;font-size:0.9375rem;">{island}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Blood Type</label>
+            <div class="blood-grid" id="blood-grid">
+              {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(bt => (
+                <button class="blood-option" data-bt={bt}>{bt}</button>
+              ))}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" id="reg-password" placeholder="Min 6 characters" />
+          </div>
+          <button class="btn btn-primary btn-block" id="register-btn" style="margin-bottom:1rem;">Create Account</button>
+          <p style="text-align:center;color:var(--text-muted);font-size:0.875rem;">
+            Have an account? <a href="#" id="show-login" style="color:var(--red);font-weight:700;">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</AppLayout>
+
+<script>
+  let selectedBlood = '';
+  let cityDropdownOpen = false;
+
+  function toggleCityDropdown() {
+    const dd = document.getElementById('city-dropdown')!;
+    cityDropdownOpen = !cityDropdownOpen;
+    dd.style.display = cityDropdownOpen ? 'flex' : 'none';
+    if (cityDropdownOpen) {
+      (document.getElementById('city-search') as HTMLInputElement)?.focus();
+    }
+  }
+
+  function selectIsland(name: string) {
+    (document.getElementById('reg-city') as HTMLInputElement).value = name;
+    document.getElementById('city-label')!.textContent = name;
+    document.getElementById('city-label')!.style.color = 'var(--text)';
+    const dd = document.getElementById('city-dropdown')!;
+    dd.style.display = 'none';
+    cityDropdownOpen = false;
+  }
+
+  function filterIslands(q: string) {
+    document.querySelectorAll('.city-opt').forEach(btn => {
+      const el = btn as HTMLElement;
+      el.style.display = el.getAttribute('data-island')?.toLowerCase().includes(q.toLowerCase()) ? 'block' : 'none';
+    });
+  }
+
+  document.addEventListener('click', e => {
+    const wrapper = document.getElementById('city-wrapper');
+    if (wrapper && !wrapper.contains(e.target as Node)) {
+      document.getElementById('city-dropdown')!.style.display = 'none';
+      cityDropdownOpen = false;
+    }
+  });
+
+  document.querySelectorAll('.blood-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.blood-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedBlood = btn.getAttribute('data-bt') ?? '';
+    });
+  });
+
+  document.getElementById('show-register')?.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('login-form')!.style.display = 'none';
+    document.getElementById('register-form')!.style.display = 'block';
+  });
+  document.getElementById('show-login')?.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('register-form')!.style.display = 'none';
+    document.getElementById('login-form')!.style.display = 'block';
+  });
+
+  function showError(msg: string) {
+    const el = document.getElementById('auth-error')!;
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  document.getElementById('login-btn')?.addEventListener('click', async () => {
+    const phone = (document.getElementById('phone') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+    const btn = document.getElementById('login-btn') as HTMLButtonElement;
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+      const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, password }) });
+      const data = await r.json();
+      if (r.ok) { window.location.href = '/'; }
+      else showError(data.error ?? 'Login failed');
+    } finally { btn.disabled = false; btn.textContent = 'Sign In'; }
+  });
+
+  document.getElementById('register-btn')?.addEventListener('click', async () => {
+    const name = (document.getElementById('reg-name') as HTMLInputElement).value.trim();
+    const phone = (document.getElementById('reg-phone') as HTMLInputElement).value.trim();
+    const city = (document.getElementById('reg-city') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('reg-password') as HTMLInputElement).value;
+    if (!name || !phone || !city || !selectedBlood || !password) { showError('Please fill all fields'); return; }
+    if (password.length < 6) { showError('Password must be at least 6 characters'); return; }
+    const btn = document.getElementById('register-btn') as HTMLButtonElement;
+    btn.disabled = true; btn.textContent = 'Creating…';
+    try {
+      const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, phone, city, blood_type: selectedBlood, password }) });
+      const data = await r.json();
+      if (r.ok) { window.location.href = '/'; }
+      else showError(data.error ?? 'Registration failed');
+    } finally { btn.disabled = false; btn.textContent = 'Create Account'; }
+  });
+</script>

@@ -1,0 +1,9 @@
+name = "redheroes"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "redheroes-db"
+database_id = "e3b423b5-c909-40a5-ac2b-e8bb38720ee1"
+migrations_dir = "migrations"

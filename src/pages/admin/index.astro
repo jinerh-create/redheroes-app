@@ -1,0 +1,20 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+import AdminPanel from '../../components/admin/AdminPanel';
+import BottomNav from '../../components/nav/BottomNav';
+const user = (Astro.locals as any).user;
+if (!user) return Astro.redirect('/login');
+if (!user.is_admin) return Astro.redirect('/');
+const safeUser = { ...user }; delete (safeUser as any).password_hash;
+---
+<AppLayout title="Admin Panel">
+  <header class="app-header">
+    <a href="/" style="color:var(--text-muted);text-decoration:none;font-size:1.25rem;margin-right:0.25rem;">←</a>
+    <div>
+      <div class="app-header-title">Admin Panel</div>
+      <div class="app-header-sub">RedHeroes management</div>
+    </div>
+  </header>
+  <AdminPanel client:load user={safeUser} />
+  <BottomNav client:load active="" />
+</AppLayout>

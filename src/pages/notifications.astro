@@ -1,0 +1,19 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import NotificationsPage from '../components/shared/NotificationsPage';
+import BottomNav from '../components/nav/BottomNav';
+const user = (Astro.locals as any).user;
+if (!user) return Astro.redirect('/login');
+const safeUser = { ...user }; delete (safeUser as any).password_hash;
+---
+<AppLayout title="Notifications">
+  <header class="app-header">
+    <a href="/" style="color:var(--text-muted);text-decoration:none;font-size:1.25rem;margin-right:0.25rem;">←</a>
+    <div>
+      <div class="app-header-title">Notifications</div>
+      <div class="app-header-sub">Your alerts</div>
+    </div>
+  </header>
+  <NotificationsPage client:load />
+  <BottomNav client:load active="" />
+</AppLayout>
