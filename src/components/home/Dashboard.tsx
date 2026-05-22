@@ -64,9 +64,9 @@ export default function Dashboard({ user }: Props) {
             { val: user.lives_saved, label: 'Lives Saved' },
             { val: rankInfo.icon, label: user.rank },
           ].map(s => (
-            <div key={s.label} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: '0.625rem 0.25rem' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--red)', lineHeight: 1 }}>{s.val}</div>
-              <div style={{ fontSize: '0.5625rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginTop: '0.2rem' }}>{s.label}</div>
+            <div key={s.label} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.18)', borderRadius: 10, padding: '0.625rem 0.25rem' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white', lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontSize: '0.5625rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginTop: '0.2rem' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -74,7 +74,7 @@ export default function Dashboard({ user }: Props) {
         {/* Rank progress */}
         {nextRank && (
           <div style={{ marginTop: '0.875rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.625rem', color: 'var(--text-muted)', marginBottom: '0.375rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.625rem', color: 'rgba(255,255,255,0.75)', marginBottom: '0.375rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               <span>Next: {nextRank.icon} {nextRank.name}</span>
               <span>{nextRank.min - user.donations_count} more donations</span>
             </div>
