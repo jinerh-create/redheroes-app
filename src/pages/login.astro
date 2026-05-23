@@ -44,23 +44,12 @@ if (user) return Astro.redirect('/');
             </div>
             <div class="form-group">
               <label class="form-label">Island</label>
-              <div style="position:relative;" id="city-wrapper">
-                <div id="city-display" onclick="toggleCityDropdown()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0.625rem 0.875rem;color:var(--text-dim);font-size:0.9375rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
-                  <span id="city-label">Select island…</span>
-                  <span style="font-size:0.75rem;">▼</span>
-                </div>
-                <input type="hidden" id="reg-city" />
-                <div id="city-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border-red);border-radius:10px;z-index:999;max-height:260px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
-                  <div style="padding:0.5rem;">
-                    <input class="form-input" id="city-search" placeholder="Search island…" oninput="filterIslands(this.value)" onclick="event.stopPropagation()" style="font-size:0.875rem;padding:0.5rem 0.75rem;" />
-                  </div>
-                  <div id="city-list" style="overflow-y:auto;max-height:200px;">
-                    {MALDIVES_ISLANDS.map(island => (
-                      <button type="button" class="city-opt" data-island={island} onclick={`selectIsland('${island}')`} style="display:block;width:100%;padding:0.5rem 1rem;background:none;color:var(--text);border:none;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;font-size:0.9375rem;">{island}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <select class="form-select" id="reg-city">
+                <option value="">Select island…</option>
+                {MALDIVES_ISLANDS.map(island => (
+                  <option value={island}>{island}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div class="form-group">
@@ -87,40 +76,6 @@ if (user) return Astro.redirect('/');
 
 <script>
   let selectedBlood = '';
-  let cityDropdownOpen = false;
-
-  function toggleCityDropdown() {
-    const dd = document.getElementById('city-dropdown')!;
-    cityDropdownOpen = !cityDropdownOpen;
-    dd.style.display = cityDropdownOpen ? 'flex' : 'none';
-    if (cityDropdownOpen) {
-      (document.getElementById('city-search') as HTMLInputElement)?.focus();
-    }
-  }
-
-  function selectIsland(name: string) {
-    (document.getElementById('reg-city') as HTMLInputElement).value = name;
-    document.getElementById('city-label')!.textContent = name;
-    document.getElementById('city-label')!.style.color = 'var(--text)';
-    const dd = document.getElementById('city-dropdown')!;
-    dd.style.display = 'none';
-    cityDropdownOpen = false;
-  }
-
-  function filterIslands(q: string) {
-    document.querySelectorAll('.city-opt').forEach(btn => {
-      const el = btn as HTMLElement;
-      el.style.display = el.getAttribute('data-island')?.toLowerCase().includes(q.toLowerCase()) ? 'block' : 'none';
-    });
-  }
-
-  document.addEventListener('click', e => {
-    const wrapper = document.getElementById('city-wrapper');
-    if (wrapper && !wrapper.contains(e.target as Node)) {
-      document.getElementById('city-dropdown')!.style.display = 'none';
-      cityDropdownOpen = false;
-    }
-  });
 
   document.querySelectorAll('.blood-option').forEach(btn => {
     btn.addEventListener('click', () => {
